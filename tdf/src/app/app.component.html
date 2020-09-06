@@ -1,1 +1,110 @@
-<button class="btn btn-primary">Submit</button>
+<div class="container-fluid mb-5">
+  <h1>Bootcamp Enrollment Form</h1>
+  <!-- Binding data with ngForm -->
+  <form #userForm="ngForm">
+
+    <!-- ngForm directive exports itself as a string ngForm and assigning it to reference variable, we have a reference to a directive itself. -->
+    <!-- ngForm directive gives us access to values of form control. -->
+    {{userForm.value |json}}
+    <!-- NgModel directive is used to let Angular knows which of the form controls need to be tracked -->
+    <!-- name attribute is necessary for each of the form control for  ngModel to work -->
+    <!-- ngModelGroup directive is used to create a subgroup within a form -->
+    <!-- For data binding in template driven forms, we have 3 directives, ngForm, ngModel, ngModelGroup. -->
+    <!-- And we can send these bound data to the server using userForm.value -->
+    <!-- <div ngModelGroup="address">
+      <div class="form-group">
+        <label>Street</label>
+        <input type="text" class="form-control" name="street" ngModel>
+      </div>
+      <div class="form-group">
+        <label>City</label>
+        <input type="text" class="form-control" name="city" ngModel>
+      </div>
+      <div class="form-group">
+        <label>State</label>
+        <input type="text" class="form-control" name="state" ngModel>
+      </div>
+      <div class="form-group">
+        <label>Postal code</label>
+        <input type="text" class="form-control" name="postalCode" ngModel>
+      </div>
+    </div> -->
+    <!-- Binding data to a model -->
+    <hr />
+    {{userModel|json}}
+    <!-- Binding userModel to the form, - bind the properties of teh model to the ngModel directive -->
+    <!-- With property binding- one way binding from class to view, all the form control values are prefilled by the data set by the userModel -->
+    <!-- two way binding can be acheived using [(ngModel)] -->
+
+    <!-- Track control state and validity -->
+    <!-- //State                   //class if true    //class if false
+    The control has been visited  ng-touched   ng-untouched 
+    The controls value has changed  ng-dirty    ng-pristine 
+    The controls value is valid      ng-valid    ng-invalid  -->
+    <!-- At any point of time Angular applies 3 classes to a form control -->
+    <!-- ngModel properties- untouched, touched, pristine, dirty, valid, invalid. -->
+    <!-- #name- template reference variable points to the input element in the DOM. -->
+    <!-- #name="ngModel" - reference to ngModel itself to access ngmodel properties - return boolean values-->
+
+    <!-- Validation with visual feedback -->
+    <!-- can use the validation classes that bootstrap 4 provides, for eg, is-invalid -->
+    <!-- make sure class is applied only when the form control is invalid. for that make use of ngModel properties coupled with class binding. -->
+    <div class="form-group">
+      <label>Name</label>
+      <input #name="ngModel" required type="text" [class.is-invalid]="name.invalid && name.touched" class="form-control"
+        name="username" [(ngModel)]="userModel.name">
+      <!-- Displaying error messages -->
+      <small class="text-danger" [class.d-none]="name.valid || name.untouched">Name is required</small>
+      <!-- d-none is bootstrap 4 validation class -->
+    </div>
+    <!-- {{name.className}} -->
+    {{name.untouched}}
+    {{name.pristine}}
+
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" class="form-control" name="email" [(ngModel)]="userModel.email">
+    </div>
+    <div class="form-group">
+      <label>Phone</label>
+      <input type="tel" required #phone="ngModel" pattern="^\d{10}$" [class.is-invalid]="phone.invalid && phone.touched"
+        class="form-control" name="phone" [(ngModel)]="userModel.phone">
+      <!-- <small class="text-danger" [class.d-none]="phone.valid || phone.untouched">Phone number is required and must be 10
+        digits</small> -->
+      <div *ngIf="phone.errors && (phone.invalid || phone.touched)">
+        <!-- Dispaly the error message if required validation happens -->
+        <small class="text-danger" *ngIf="phone.errors.required">Phone number is required</small>
+        <!-- Display the error message if pattern validation happens -->
+        <small class="text-danger" *ngIf="phone.errors.pattern">Phone number must be 10 digits</small>
+      </div>
+    </div>
+    <div>
+      <select selected class="custom-select" name="topic" [(ngModel)]="userModel.topic">
+        <option value="">I am interested in</option>
+        <option *ngFor="let topic of topics">{{topic}}</option>
+      </select>
+
+      <div>
+        <label>Time preference</label>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="timePreference" value="morning"
+            [(ngModel)]="userModel.timePreference">
+          <label class="form-check-label">Morning (9AM-12PM)</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="timePreference" value="evening"
+            [(ngModel)]="userModel.timePreference">
+          <label class="form-check-label">Evening (5PM-8PM)</label>
+        </div>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="subscribe" [(ngModel)]="userModel.subscribe">
+        <label class="form-check-label">Send me promotional offers</label>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Submit</button>
+  </form>
+
+
+</div>

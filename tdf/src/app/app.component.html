@@ -1,7 +1,15 @@
 <div class="container-fluid mb-5">
   <h1>Bootcamp Enrollment Form</h1>
+  <div class="alert alert-danger" *ngIf="errorMessage">
+    {{errorMessage}}
+  </div>
   <!-- Binding data with ngForm -->
-  <form #userForm="ngForm">
+  <!-- Whenever we add a form element in theHTML, angular automatically attaches the ngForm directive to the form tag.
+  We can get a reference to that ngForm directive with a help of template reference variables. -->
+  <form #userForm="ngForm" *ngIf="!submitted" novalidate (ngSubmit)="onSubmit()">
+    <!-- novalidate will prevent browser validation from kicking in when we click on the submit button -->
+    <!-- ngForm has properties, provides the overall form validation.This can be used to disable the submit button and tell form is invalid -->
+    {{userForm.form.valid}}
 
     <!-- ngForm directive exports itself as a string ngForm and assigning it to reference variable, we have a reference to a directive itself. -->
     <!-- ngForm directive gives us access to values of form control. -->
@@ -79,31 +87,48 @@
       </div>
     </div>
     <div>
-      <select selected class="custom-select" name="topic" [(ngModel)]="userModel.topic">
-        <option value="">I am interested in</option>
+      <!-- select control validation -->
+      <!-- topic is template reference variable and we access the value property -->
+      <!-- remove required attribute -->
+      <select (blur)="validateTopic(topic.value) " (change)="validateTopic(topic.value)" #topic="ngModel"
+        [class.is-invalid]="topicHasError && topic.touched" class="custom-select" name="topic"
+        [(ngModel)]="userModel.topic">
+        <!-- the [class.is-invalid]="topic.invalid && topic.touched" changed to [class.is-invalid]="topicHasError && topic.touched" -->
+        <!-- This works only when the value is set to empty for the corresponding text. option has a value of empty string
+        and that is passed in the the model.
+        If the dropdown options are populated from the api instead of harcoded array, for default option value is set to
+        default and not empty string. -->
+        <!-- <option value="">I am interested in</option> -->
+        <!-- The validation fails for default, it works only for empty string, so we need custom validation -->
+        <option value="default">I am interested in</option>
+        <!-- We are going to listen to the blur and change events on the select control.use error flag set to true/false if the value is default.
+        Use that error flag to conditionally apply classes and display the error message. -->
+
         <option *ngFor="let topic of topics">{{topic}}</option>
       </select>
-
-      <div>
-        <label>Time preference</label>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="timePreference" value="morning"
-            [(ngModel)]="userModel.timePreference">
-          <label class="form-check-label">Morning (9AM-12PM)</label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="timePreference" value="evening"
-            [(ngModel)]="userModel.timePreference">
-          <label class="form-check-label">Evening (5PM-8PM)</label>
-        </div>
+      <small class="text-danger" [class.d-none]="!topicHasError ||topic.untouched">Please choose a topic</small>
+    </div>
+    <div>
+      <label>Time preference</label>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="timePreference" value="morning"
+          [(ngModel)]="userModel.timePreference">
+        <label class="form-check-label">Morning (9AM-12PM)</label>
       </div>
       <div class="form-check">
-        <input class="form-check-input" type="checkbox" name="subscribe" [(ngModel)]="userModel.subscribe">
-        <label class="form-check-label">Send me promotional offers</label>
+        <input class="form-check-input" type="radio" name="timePreference" value="evening"
+          [(ngModel)]="userModel.timePreference">
+        <label class="form-check-label">Evening (5PM-8PM)</label>
       </div>
     </div>
-
-    <button class="btn btn-primary" type="submit">Submit</button>
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" name="subscribe" [(ngModel)]="userModel.subscribe">
+      <label class="form-check-label">Send me promotional offers</label>
+    </div>
+    <!-- This works fine, when you don't have any custom validation that ngForm is not tracking.But when we have custom select validation, to handle this, 
+when the submit button is clicked event is fired, you can check the value of the field and proceed submitting the form. 
+Here add another condition to disabled property topicHasError. -->
+    <button [disabled]="userForm.form.invalid ||topicHasError" class="btn btn-primary" type="submit">Submit</button>
   </form>
 
 

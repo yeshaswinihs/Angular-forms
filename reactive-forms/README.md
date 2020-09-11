@@ -45,3 +45,9 @@ Steps:
 - Validations- Simple, Custom, Cross-field and Dynamic
 - Dynamic form controls
 -Submitting form data
+
+Reactive forms classes- form group and form control- building blocks of reactive forms.
+In reactive forms, form is represented by a model in the component class.
+To be able to create that model, we use form control and form group classes.
+Entire form represented as Form group.
+Each form field represented as form control 
